@@ -3,6 +3,8 @@ package readablecode.week3;
 import java.util.List;
 import java.util.Objects;
 
+import com.google.common.base.Strings;
+
 public class MarkdownTableUtils {
 	// TODO3 : find the code to be replace with the method used at TODO7
 	// refer OAOO principal
@@ -25,7 +27,8 @@ public class MarkdownTableUtils {
 	 * @param headerRowCaptions the captions for header row
 	 * @param emptyRowCount     the number of empty rows.
 	 * @return the string of table which has empty rows as Markdown table
-	 * 
+	 * @throw IllegalArgumentException	パラメータにエラーあり
+	 * @throw NullPointerException	パラメータがNull
 	 * 
 	 */
 	public static String createEmptyTable(List<String> headerRowCaptions, int emptyRowCount) {
@@ -37,49 +40,65 @@ public class MarkdownTableUtils {
 		if (emptyRowCount < 1) {
 			throw new IllegalArgumentException("emptyRowCount must be greater than or equal to 1");
 		}
+		// create header and empty rows
+		String headerRows = createHeaderRows(headerRowCaptions);
+		String emptyRows = createEmptyRows(headerRowCaptions, emptyRowCount);
 
-		StringBuilder markdownTable = new StringBuilder();
-		// create line for header row captions
-		for (String e : headerRowCaptions) {
-			markdownTable.append("|");
-			markdownTable.append(e);
-		}
-		markdownTable.append("|");
-		markdownTable.append(System.lineSeparator());
-
-		// create line for header row separator
-		for (String e : headerRowCaptions) {
-			markdownTable.append("|");
-
-			// TODO2 : use com.google.common.base.Strings to replace the followings:13.4
-			// target code to replace with Strings begin
-			for (int i = 0; i < e.length(); i++) {
-				markdownTable.append("-");
-			}
-			// target code to replace with guava end
-			// how to find suitable method in framework
-			// 1.open {@link com.google.common.base.Strings} and check outline (control + o)
-			// and read javadoc
-			// 2.check junit TestCase on github
-
-		}
-		markdownTable.append("|");
-		markdownTable.append(System.lineSeparator());
-
-		// create lines for empty rows
-		for (int i = 0; i < emptyRowCount; i++) {
-			for (String e : headerRowCaptions) {
-				markdownTable.append("|");
-				for (int j = 0; j < e.length(); j++) {
-					markdownTable.append(" ");
-				}
-			}
-			markdownTable.append("|");
-			markdownTable.append(System.lineSeparator());
-		}
-
-		return markdownTable.toString();
-
+		return (headerRows + emptyRows);
 	}
 
+	/**
+	 * Return markdown table's empty rows string
+	 * @param headerRowCaptions
+	 * @param emptyRowCount
+	 * @return String
+	 */
+	private static String createEmptyRows(List<String> headerRowCaptions, int emptyRowCount) {
+		StringBuilder markdownTable = new StringBuilder();
+		// create lines for empty rows
+		for (int i = 0; i < emptyRowCount; i++) {
+			markdownTable = createRow(markdownTable, headerRowCaptions, " ");
+		}
+		return markdownTable.toString();
+	}
+
+	/**
+	 * Return markdown table's header-row & border-row string(2 lines)
+	 * @param headerRowCaptions
+	 * @param emptyRowCount
+	 * @return String
+	 */
+	private static String createHeaderRows(List<String> headerRowCaptions) {
+		StringBuilder markdownTable = new StringBuilder();
+		// create header row
+		markdownTable = createRow(markdownTable, headerRowCaptions);
+		// create border row
+		markdownTable = createRow(markdownTable, headerRowCaptions, "-");
+		return markdownTable.toString();
+	}
+	
+	/**
+	 * Return markdown table's row with parameter
+	 * It will append row string to stringbuilder that passing by parameter
+	 * @param markdownTable
+	 * @param headerRowCaptions
+	 * @param value Optional Parameter
+	 * @return StringBuilder
+	 */
+	private static StringBuilder createRow(StringBuilder markdownTable, List<String> headerRowCaptions, String... value) {
+		// create row with parameter
+		for (String e : headerRowCaptions) {
+			markdownTable.append("|");
+			// when value is not null and length is 1 -> repeat value's character
+			// or else, repeat headerRowCaptions's header string
+			if (value.length > 0 && value[0].length() == 1) {
+				markdownTable.append(Strings.repeat(value[0], e.length()));
+			} else {
+				markdownTable.append(e);
+			}
+		}
+		markdownTable.append("|");
+		markdownTable.append(System.lineSeparator());
+		return markdownTable;
+	}
 }
