@@ -6,18 +6,6 @@ import java.util.Objects;
 import com.google.common.base.Strings;
 
 public class MarkdownTableUtils {
-	// TODO3 : find the code to be replace with the method used at TODO7
-	// refer OAOO principal
-
-	// TODO4 : extract method and remove the comment if the comment is unnecessary,
-	// 11.4, 5.1
-
-	// TODO5 : refactor the extracted method by removing StringBuilder Argument and
-	// return String
-	// https://cyzennt.co.jp/blog/2021/05/19/java%EF%BC%9A%E5%BC%95%E6%95%B0%E3%81%A7%E6%B8%A1%E3%81%97%E3%81%9F%E5%8F%82%E7%85%A7%E5%9E%8B%E5%A4%89%E6%95%B0%E3%82%92%E3%83%A1%E3%82%BD%E3%83%83%E3%83%89%E5%86%85%E3%81%A7%E5%A4%89%E6%9B%B4/
-
-	// TODO1 add @throws in javadoc
-	// e.g @throws xxxException if xxx is null or is less than XXX
 	/**
 	 * Returns the string of table which has empty rows as Markdown table syntax.
 	 * length of captions for separator cell and empty cell is same with their
@@ -40,11 +28,14 @@ public class MarkdownTableUtils {
 		if (emptyRowCount < 1) {
 			throw new IllegalArgumentException("emptyRowCount must be greater than or equal to 1");
 		}
-		// create header and empty rows
+		
+		// create header, border, empty rows
 		String headerRows = createHeaderRows(headerRowCaptions);
+		String borderRows = createBorderRows(headerRowCaptions);
 		String emptyRows = createEmptyRows(headerRowCaptions, emptyRowCount);
 
-		return (headerRows + emptyRows);
+		// return string joined all rows
+		return (headerRows + borderRows + emptyRows);
 	}
 
 	/**
@@ -55,37 +46,52 @@ public class MarkdownTableUtils {
 	 */
 	private static String createEmptyRows(List<String> headerRowCaptions, int emptyRowCount) {
 		StringBuilder markdownTable = new StringBuilder();
-		// create lines for empty rows
+		
+		// create lines for empty rows in markdownTable
 		for (int i = 0; i < emptyRowCount; i++) {
-			markdownTable = createRow(markdownTable, headerRowCaptions, " ");
+			createRow(markdownTable, headerRowCaptions, " ");
 		}
+		
 		return markdownTable.toString();
 	}
 
 	/**
-	 * Return markdown table's header-row & border-row string(2 lines)
+	 * Return markdown table's header-row string
 	 * @param headerRowCaptions
-	 * @param emptyRowCount
 	 * @return String
 	 */
 	private static String createHeaderRows(List<String> headerRowCaptions) {
 		StringBuilder markdownTable = new StringBuilder();
-		// create header row
-		markdownTable = createRow(markdownTable, headerRowCaptions);
-		// create border row
-		markdownTable = createRow(markdownTable, headerRowCaptions, "-");
+		
+		// create header row in markdownTable
+		createRow(markdownTable, headerRowCaptions);
+		
+		return markdownTable.toString();
+	}
+	
+	/**
+	 * Return markdown table's border-row string
+	 * @param headerRowCaptions
+	 * @return String
+	 */
+	private static String createBorderRows(List<String> headerRowCaptions) {
+		StringBuilder markdownTable = new StringBuilder();
+		
+		// create border row in markdownTable
+		createRow(markdownTable, headerRowCaptions, "-");
+		
 		return markdownTable.toString();
 	}
 	
 	/**
 	 * Return markdown table's row with parameter
-	 * It will append row string to stringbuilder that passing by parameter
+	 * It will append row string to stringbuilder instance that passing by parameter
 	 * @param markdownTable
 	 * @param headerRowCaptions
 	 * @param value Optional Parameter
 	 * @return StringBuilder
 	 */
-	private static StringBuilder createRow(StringBuilder markdownTable, List<String> headerRowCaptions, String... value) {
+	private static void createRow(StringBuilder markdownTable, List<String> headerRowCaptions, String... value) {
 		// create row with parameter
 		for (String e : headerRowCaptions) {
 			markdownTable.append("|");
@@ -99,6 +105,5 @@ public class MarkdownTableUtils {
 		}
 		markdownTable.append("|");
 		markdownTable.append(System.lineSeparator());
-		return markdownTable;
 	}
 }
