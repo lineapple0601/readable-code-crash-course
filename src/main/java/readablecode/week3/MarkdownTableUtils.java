@@ -30,8 +30,8 @@ public class MarkdownTableUtils {
 		}
 		
 		// create header, border, empty rows
-		String headerRows = createHeaderRows(headerRowCaptions);
-		String borderRows = createBorderRows(headerRowCaptions);
+		String headerRows = createRow(headerRowCaptions); // createHeaderRows(headerRowCaptions);
+		String borderRows = createRow(headerRowCaptions, "-"); // createBorderRows(headerRowCaptions);
 		String emptyRows = createEmptyRows(headerRowCaptions, emptyRowCount);
 
 		// return string joined all rows
@@ -46,43 +46,13 @@ public class MarkdownTableUtils {
 	 */
 	private static String createEmptyRows(List<String> headerRowCaptions, int emptyRowCount) {
 		StringBuilder markdownTable = new StringBuilder();
-		
 		// create lines for empty rows in markdownTable
 		for (int i = 0; i < emptyRowCount; i++) {
-			createRow(markdownTable, headerRowCaptions, " ");
+			markdownTable.append(createRow(headerRowCaptions, " "));
 		}
-		
 		return markdownTable.toString();
 	}
 
-	/**
-	 * Return markdown table's header-row string
-	 * @param headerRowCaptions
-	 * @return String
-	 */
-	private static String createHeaderRows(List<String> headerRowCaptions) {
-		StringBuilder markdownTable = new StringBuilder();
-		
-		// create header row in markdownTable
-		createRow(markdownTable, headerRowCaptions);
-		
-		return markdownTable.toString();
-	}
-	
-	/**
-	 * Return markdown table's border-row string
-	 * @param headerRowCaptions
-	 * @return String
-	 */
-	private static String createBorderRows(List<String> headerRowCaptions) {
-		StringBuilder markdownTable = new StringBuilder();
-		
-		// create border row in markdownTable
-		createRow(markdownTable, headerRowCaptions, "-");
-		
-		return markdownTable.toString();
-	}
-	
 	/**
 	 * Return markdown table's row with parameter
 	 * It will append row string to stringbuilder instance that passing by parameter
@@ -91,7 +61,9 @@ public class MarkdownTableUtils {
 	 * @param value Optional Parameter
 	 * @return StringBuilder
 	 */
-	private static void createRow(StringBuilder markdownTable, List<String> headerRowCaptions, String... value) {
+	private static String createRow(List<String> headerRowCaptions, String... value) {
+		StringBuilder markdownTable = new StringBuilder();
+		
 		// create row with parameter
 		for (String e : headerRowCaptions) {
 			markdownTable.append("|");
@@ -105,5 +77,7 @@ public class MarkdownTableUtils {
 		}
 		markdownTable.append("|");
 		markdownTable.append(System.lineSeparator());
+		
+		return markdownTable.toString();
 	}
 }
